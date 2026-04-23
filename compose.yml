@@ -1,6 +1,6 @@
 services:
   bookstack-db:
-    image: mariadb:latest
+    image: mariadb@sha256:e0236fc6386e7eacd9359e59d0a078bd7aa0d18280d36d13061121bedeaee903
     container_name: bookstack-db-ctr
     restart: unless-stopped
     env_file:
@@ -23,7 +23,7 @@ services:
       start_period: 20s
 
   bookstack-app:
-    image: lscr.io/linuxserver/bookstack:latest
+    image: lscr.io/linuxserver/bookstack@sha256:a8d5828fa4363c49b3110917d7578927bc70af89654904c60b01f6d347570612
     container_name: bookstack-app-ctr
     restart: unless-stopped
     env_file:
@@ -46,7 +46,7 @@ services:
         condition: service_healthy
 
   bookstack-proxy:
-    image: nginx:latest
+    image: nginx@sha256:7f0adca1fc6c29c8dc49a2e90037a10ba20dc266baaed0988e9fb4d0d8b85ba0
     container_name: bookstack-proxy-ctr
     restart: unless-stopped
     ports:
