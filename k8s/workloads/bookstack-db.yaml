@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstack-db
+  namespace: bookstack-lab
+  labels:
+    app.kubernetes.io/name: bookstack
+    app.kubernetes.io/component: db
+    app.kubernetes.io/part-of: bookstack-lab
+    app.kubernetes.io/managed-by: manual-lab
+    app.kubernetes.io/environment: lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bookstack
+      app.kubernetes.io/component: db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bookstack
+        app.kubernetes.io/component: db
+        app.kubernetes.io/part-of: bookstack-lab
+        app.kubernetes.io/managed-by: manual-lab
+        app.kubernetes.io/environment: lab
+  spec:
+    containers:
+      - name: mariadb
+        image: mariadb@sha256:e0236fc6386e7eacd9359e59d0a078bd7aa0d18280d36d13061121bedeaee903
+        ports:
+          - containerPort: 3306
+            name: mysql
+        env:
+          - name: MARIADB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: BOOKSTACK_DB_NAME
+          - name: MARIADB_USER
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: BOOKSTACK_DB_USER
+          - name: MARIADB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bookstack-secret
+                key: BOOKSTACK_DB_PASSWORD
+          - name: MARIADB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bookstack-secret
+                key: MARIADB_ROOT_PASSWORD
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: TZ
+        volumeMounts:
+          - name: db-data
+            mountPath: /var/lib/mysql
+    volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: bookstack-db-data

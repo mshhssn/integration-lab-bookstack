@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstack-app
+  namespace: bookstack-lab
+  labels:
+    app.kubernetes.io/name: bookstack
+    app.kubernetes.io/component: app
+    app.kubernetes.io/part-of: bookstack-lab
+    app.kubernetes.io/managed-by: manual-lab
+    app.kubernetes.io/environment: lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bookstack
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bookstack
+        app.kubernetes.io/component: app
+        app.kubernetes.io/part-of: bookstack-lab
+        app.kubernetes.io/managed-by: manual-lab
+        app.kubernetes.io/environment: lab
+  spec:
+    containers:
+      - name: bookstack
+        image: lscr.io/linuxserver/bookstack@sha256:a8d5828fa4363c49b3110917d7578927bc70af89654904c60b01f6d347570612
+        ports:
+          - containerPort: 80
+            name: http
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: TZ
+          - name: APP_URL
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: BOOKSTACK_APP_URL
+          - name: APP_KEY
+            valueFrom:
+              secretKeyRef:
+                name: bookstack-secret
+                key: BOOKSTACK_APP_KEY
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: BOOKSTACK_DB_HOST
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: BOOKSTACK_DB_PORT
+          - name: DB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: BOOKSTACK_DB_NAME
+          - name: DB_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: bookstack-config
+                key: BOOKSTACK_DB_USER
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bookstack-secret
+                key: BOOKSTACK_DB_PASSWORD
+        volumeMounts:
+          - name: app-data
+            mountPath: /config
+    volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: bookstack-app-data

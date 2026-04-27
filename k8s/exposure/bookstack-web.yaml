@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bookstack-web
+  namespace: bookstack-lab
+  labels:
+    app.kubernetes.io/name: bookstack
+    app.kubernetes.io/component: web
+    app.kubernetes.io/part-of: bookstack-lab
+    app.kubernetes.io/managed-by: manual-lab
+    app.kubernetes.io/environment: lab
+spec:
+  rules:
+    - host: bookstack.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bookstack-app
+                port:
+                  number: 80

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bookstack-lab
+  labels:
+    app.kubernetes.io/name: bookstack
+    app.kubernetes.io/part-of: bookstack-lab
+    app.kubernetes.io/managed-by: manual-lab
+    app.kubernetes.io/environment: lab
