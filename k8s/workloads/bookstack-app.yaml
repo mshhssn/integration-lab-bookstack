@@ -23,58 +23,87 @@ spec:
         app.kubernetes.io/part-of: bookstack-lab
         app.kubernetes.io/managed-by: manual-lab
         app.kubernetes.io/environment: lab
-  spec:
-    containers:
-      - name: bookstack
-        image: lscr.io/linuxserver/bookstack@sha256:a8d5828fa4363c49b3110917d7578927bc70af89654904c60b01f6d347570612
-        ports:
-          - containerPort: 80
-            name: http
-        env:
-          - name: TZ
-            valueFrom:
-              configMapKeyRef:
-                name: bookstack-config
-                key: TZ
-          - name: APP_URL
-            valueFrom:
-              configMapKeyRef:
-                name: bookstack-config
-                key: BOOKSTACK_APP_URL
-          - name: APP_KEY
-            valueFrom:
-              secretKeyRef:
-                name: bookstack-secret
-                key: BOOKSTACK_APP_KEY
-          - name: DB_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: bookstack-config
-                key: BOOKSTACK_DB_HOST
-          - name: DB_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: bookstack-config
-                key: BOOKSTACK_DB_PORT
-          - name: DB_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: bookstack-config
-                key: BOOKSTACK_DB_NAME
-          - name: DB_USERNAME
-            valueFrom:
-              configMapKeyRef:
-                name: bookstack-config
-                key: BOOKSTACK_DB_USER
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: bookstack-secret
-                key: BOOKSTACK_DB_PASSWORD
-        volumeMounts:
-          - name: app-data
-            mountPath: /config
-    volumes:
-      - name: app-data
-        persistentVolumeClaim:
-          claimName: bookstack-app-data
+    spec:
+      containers:
+        - name: bookstack
+          image: lscr.io/linuxserver/bookstack@sha256:a8d5828fa4363c49b3110917d7578927bc70af89654904c60b01f6d347570612
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: bookstack-config
+                  key: TZ
+            - name: APP_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: bookstack-config
+                  key: BOOKSTACK_APP_URL
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookstack-secret
+                  key: BOOKSTACK_APP_KEY
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: bookstack-config
+                  key: BOOKSTACK_DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: bookstack-config
+                  key: BOOKSTACK_DB_PORT
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: bookstack-config
+                  key: BOOKSTACK_DB_NAME
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: bookstack-config
+                  key: BOOKSTACK_DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookstack-secret
+                  key: BOOKSTACK_DB_PASSWORD
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          startupProbe:
+            httpGet:
+              path: /login
+              port: http
+            periodSeconds: 10
+            failureThreshold: 12
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: app-data
+              mountPath: /config
+      volumes:
+        - name: app-data
+          persistentVolumeClaim:
+            claimName: bookstack-app-data
