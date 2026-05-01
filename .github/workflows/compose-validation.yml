@@ -57,7 +57,7 @@ jobs:
 
       - name: Start stack
         run: |
-          docker compose -f compose.yml up -d --build
+          docker compose -f compose.yml up -d
 
       - name: Show stack status
         run: |
