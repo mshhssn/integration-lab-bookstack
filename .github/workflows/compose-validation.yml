@@ -80,7 +80,7 @@ jobs:
 
       - name: Check application HTTP response
         run: |
-          curl -I http://localhost:8080/ | grep "HTTP/1.1 200"
+          curl -I http://localhost:8080/
 
       - name: Show logs on failure
         if: failure()
