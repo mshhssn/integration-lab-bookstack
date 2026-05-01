@@ -1,5 +1,4 @@
 .env
-.env*
 *.log
 *.bak
 .vscode/settings.json
