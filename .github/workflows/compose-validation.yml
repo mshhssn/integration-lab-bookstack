@@ -90,4 +90,4 @@ jobs:
       - name: Stop stack
         if: always()
         run: |
-          docker compose -f compose.yml down
+          docker compose -f compose.yml down --volumes --remove-orphans
