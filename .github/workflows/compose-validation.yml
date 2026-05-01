@@ -87,7 +87,7 @@ jobs:
         run: |
           docker compose -f compose.yml logs --tail=200
 
-      - name: Stop stack
-        if: always()
-        run: |
-          docker compose -f compose.yml down
+##      - name: Stop stack
+##        if: always()
+##        run: |
+##          docker compose -f compose.yml down
