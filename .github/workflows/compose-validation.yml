@@ -23,7 +23,7 @@ jobs:
         run: docker --version
 
       - name: Show Docker Compose version
-        run: docker-compose --version
+        run: docker compose --version
 
       - name: List files in repository
         run: ls -la
