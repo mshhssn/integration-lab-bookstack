@@ -52,6 +52,15 @@ jobs:
           fi
           echo "No actual secrets found in .env.example"
 
+
+      - name: Ensure .env.example does not contain actual secrets
+        run: |
+          if grep -E 'BOOKSTACK_DB_PASSWORD=.+|BOOKSTACK_DB_PASSWORT=.+|MARIADB_ROOT_PASSWORD=.+' .env.example; then
+            echo ".env.example contains actual secrets"
+            exit 1
+          fi
+          echo "No actual secrets found in .env.example"      
+    
       - name: Ensure compose.yml does not contain hardcoded secrets
         run: |
           if grep -E 'BOOKSTACK_DB_PASSWORD=|MARIADB_ROOT_PASSWORD=' compose.yml; then
